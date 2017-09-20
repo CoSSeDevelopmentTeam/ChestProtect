@@ -1,0 +1,12 @@
+name: ChestProtect
+main: net.comorevi.chestprotect.ChestProtect
+version: 1.0.0
+load: POSTWORLD
+author: popkechupki
+api: ["1.0.0"]
+description: CoSSeのチェストロックプラグイン
+
+commands:
+  chest:
+    description: ChestProtectのマスターコマンド
+    usage: "/warp [ info ]"
