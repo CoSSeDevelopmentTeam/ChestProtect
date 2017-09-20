@@ -16,11 +16,11 @@
  *
  */
 
-package net.comroevi.chestprotect;
+package net.comorevi.chestprotect;
 
 import cn.nukkit.utils.TextFormat;
 
-public abstract class TextValues {
+public class TextValues {
     public static final String INFO = TextFormat.GREEN + "ChestProtect>>" + TextFormat.AQUA + "情報 " + TextFormat.RESET;
     public static final String WARNING = TextFormat.GREEN + "ChestProtect>>" + TextFormat.YELLOW + "注意 " + TextFormat.RESET;
     public static final String ALERT = TextFormat.GREEN + "ChestProtect>>" + TextFormat.RED + "警告 " + TextFormat.RESET;

@@ -16,7 +16,7 @@
  *
  */
 
-package net.comroevi.chestprotect;
+package net.comorevi.chestprotect;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -86,10 +86,10 @@ public class SQLite3DataProvider {
 					e.printStackTrace();
 				}
     		} else {
-    			plugin.getServer().getPlayer(user).sendMessage(ChestProtect.ALERT + plugin.translateString("error-all"));
+    			plugin.getServer().getPlayer(user).sendMessage(TextValues.ALERT + plugin.translateString("error-all"));
     		}
     	} else {
-    		plugin.getServer().getPlayer(user).sendMessage(ChestProtect.ALERT + plugin.translateString("error-all"));;
+    		plugin.getServer().getPlayer(user).sendMessage(TextValues.ALERT + plugin.translateString("error-all"));;
     	}
     }
 

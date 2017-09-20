@@ -16,7 +16,7 @@
  *
  */
 
-package net.comroevi.chestprotect;
+package net.comorevi.chestprotect;
 
 import cn.nukkit.Player;
 import cn.nukkit.block.Block;
@@ -43,10 +43,10 @@ public class EventListener implements Listener {
 		    case Block.CHEST:
 		    	if(!plugin.getSQL().isOwner(user, (int)block.getX(), (int)block.getY(), (int)block.getZ())) {
 		    		if(player.isOp()) {
-		    			player.sendMessage(ChestProtect.INFO + plugin.translateString("player-chest-interact-byOp"));
+		    			player.sendMessage(TextValues.INFO + plugin.translateString("player-chest-interact-byOp"));
 		    		} else {
 		    			event.setCancelled();
-			    		player.sendMessage(ChestProtect.INFO + plugin.translateString("error-chest-interact"));
+			    		player.sendMessage(TextValues.INFO + plugin.translateString("error-chest-interact"));
 		    		}	
 		    	}
 		    	break;
@@ -62,14 +62,14 @@ public class EventListener implements Listener {
 		    case Block.CHEST:
 		    	if(plugin.getSQL().isOwner(user, (int)block.getX(), (int)block.getY(), (int)block.getZ())) {
 		    		plugin.getSQL().deleteProtect(user, (int)block.getX(), (int)block.getY(), (int)block.getZ(), "normal");
-		    		player.sendMessage(ChestProtect.INFO + plugin.translateString("player-chest-break"));
+		    		player.sendMessage(TextValues.INFO + plugin.translateString("player-chest-break"));
 		    	} else {
 		    		if(player.isOp()) {
-		    			player.sendMessage(ChestProtect.INFO + plugin.translateString("player-chest-break-byOp"));
+		    			player.sendMessage(TextValues.INFO + plugin.translateString("player-chest-break-byOp"));
 		    			plugin.getSQL().deleteProtect(user, (int)block.getX(), (int)block.getY(), (int)block.getZ(), "normal");
 		    		} else {
 		    			event.setCancelled();
-			    		player.sendMessage(ChestProtect.ALERT + plugin.translateString("error-chest-break"));
+			    		player.sendMessage(TextValues.ALERT + plugin.translateString("error-chest-break"));
 		    		}	
 		    	}
 		    	break;
@@ -84,7 +84,7 @@ public class EventListener implements Listener {
 	    switch (block.getId()) {
 		    case Block.CHEST:
 		    	plugin.getSQL().addNormalProtect(owner, (int)block.getX(), (int)block.getY(), (int)block.getZ());
-		    	player.sendMessage(ChestProtect.INFO + plugin.translateString("player-chest-place"));
+		    	player.sendMessage(TextValues.INFO + plugin.translateString("player-chest-place"));
 		    	break;
 	    }
 	}

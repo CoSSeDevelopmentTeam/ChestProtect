@@ -1,6 +1,6 @@
 player-isNotOP: "あなたはOPではないのでこのコマンドを実行することができません。"
 player-chest-place: "設置したチェストにノーマルロックが設定されました。"
-player-chest-break: "チェストのロックが解除されました。
+player-chest-break: "チェストのロックが解除されました。"
 player-chest-break-byOp: "オペレーター権限によりチェストを撤去しました。"
 player-chest-interact-byOp: "オペレーター権限によりチェストを解錠しました。"
 error-chest-break: "チェストのオーナーでないため撤去できません。"

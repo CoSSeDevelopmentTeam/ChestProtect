@@ -16,7 +16,7 @@
  *
  */
 
-package net.comroevi.chestprotect;
+package net.comorevi.chestprotect;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -38,12 +38,6 @@ import cn.nukkit.utils.TextFormat;
 import cn.nukkit.utils.Utils;
 
 public class ChestProtect extends PluginBase {
-	
-	public static final String INFO = TextFormat.GREEN + "this>>" + TextFormat.AQUA + "情報 " + TextFormat.RESET;
-    public static final String WARNING = TextFormat.GREEN + "this>>" + TextFormat.YELLOW + "注意 " + TextFormat.RESET;
-    public static final String ALERT = TextFormat.GREEN + "this>>" + TextFormat.RED + "警告 " + TextFormat.RESET;
-    public static final String HELP = TextFormat.GREEN + "this>>" + TextFormat.LIGHT_PURPLE + "ヘルプ " + TextFormat.RESET;
-    public static final String FREE = TextFormat.GREEN + "this>>" + TextFormat.RESET;
 	
 	private Config translateFile;
     private Map<String, Object> configData = new HashMap<String, Object>();
@@ -76,7 +70,7 @@ public class ChestProtect extends PluginBase {
         if(command.getName().equals("chest")){
 
             if(sender instanceof ConsoleCommandSender){
-                sender.sendMessage(this.WARNING + this.translateString("error-command-console"));
+                sender.sendMessage(TextValues.WARNING + this.translateString("error-command-console"));
                 return true;
             }
 
@@ -138,7 +132,7 @@ public class ChestProtect extends PluginBase {
     public String translateString(String key, String... args){
         if(configData != null || !configData.isEmpty()){
             String src = (String) configData.get(key);
-            if(src == null || src.equals("")) return this.ALERT + (String) configData.get("error-notFoundKey");
+            if(src == null || src.equals("")) return TextValues.ALERT + (String) configData.get("error-notFoundKey");
             for(int i=0;i < args.length;i++){
                 src = src.replace("{%" + i + "}", args[i]);
             }
