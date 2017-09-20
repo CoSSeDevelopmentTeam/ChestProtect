@@ -36,7 +36,7 @@ public class SQLite3DataProvider {
     
     public boolean existsProtect(int x, int y, int z) {
     	try {
-    		ResultSet rs = statement.executeQuery("select point from protect where xyz = '"+x+":"+y+":"+z+"'");
+    		ResultSet rs = statement.executeQuery("select * from protect where (xyz = '"+x+":"+y+":"+z+"')");
 			if(rs.getString("xyz") != null) {
 				return true;
 			} else {
@@ -52,8 +52,8 @@ public class SQLite3DataProvider {
     public boolean isOwner(String user, int x, int y, int z) {
     	if(existsProtect(x, y, z)) {
 			try {
-				ResultSet rs = statement.executeQuery("SELECT * from protect WHERE (xyz = '"+x+":"+y+":"+z+"')");
-				if(user.equals(rs.getString("user"))) {
+				ResultSet rs = statement.executeQuery("select * from protect where (xyz = '"+x+":"+y+":"+z+"')");
+				if(user.equals(rs.getString("owner"))) {
 					return true;
 				} else {
 					return false;
@@ -68,7 +68,7 @@ public class SQLite3DataProvider {
     
     public void addNormalProtect(String owner, int x, int y, int z) {
     	try {
-			statement.executeUpdate("insert into protect(owner, xyz, type) values('"+owner+"', '"+x+":"+y+":"+z+"', normal)");
+			statement.executeUpdate("insert into protect(owner, xyz, type) values('"+owner+"', '"+x+":"+y+":"+z+"', 'normal')");
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

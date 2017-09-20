@@ -60,7 +60,7 @@ public class EventListener implements Listener {
 	    Block block = event.getBlock();
 	    switch (block.getId()) {
 		    case Block.CHEST:
-		    	if(plugin.getSQL().isOwner(user, (int)block.getX(), (int)block.getY(), (int)block.getZ())) {
+	    		if(plugin.getSQL().isOwner(user, (int)block.getX(), (int)block.getY(), (int)block.getZ())) {
 		    		plugin.getSQL().deleteProtect(user, (int)block.getX(), (int)block.getY(), (int)block.getZ(), "normal");
 		    		player.sendMessage(TextValues.INFO + plugin.translateString("player-chest-break"));
 		    	} else {
