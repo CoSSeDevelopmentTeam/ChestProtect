@@ -18,6 +18,8 @@
 
 package net.comorevi.chestprotect;
 
+import java.util.Map;
+
 import cn.nukkit.Player;
 import cn.nukkit.block.Block;
 import cn.nukkit.event.EventHandler;
@@ -42,6 +44,20 @@ public class EventListener implements Listener {
 	    switch (block.getId()) {
 		    case Block.CHEST:
 		    	if(!plugin.getSQL().isOwner(user, (int)block.getX(), (int)block.getY(), (int)block.getZ())) {
+		    		Map<String, Object> map = plugin.getSQL().getProtectData((int)block.getX(), (int)block.getY(), (int)block.getZ());
+		    		switch((String) map.get("type")) {
+		    			case "pass":
+		    				event.setCancelled();
+		    				player.sendMessage(TextValues.INFO + plugin.translateString("error-all"));
+		    				break;
+		    			case "share":
+		    				//Map<String, Object> sharedata = plugin.getSQL().getOptionProtectData((int) map.get("id"), (String) map.get("type"));
+		    				//,が含まれてるか。含まれてなければそのまま比較、含まれてたら分割して配列内にあるか確認
+		    				break;
+		    			case "public":
+		    				player.sendMessage(TextValues.INFO + plugin.translateString("player-chest-interact-type-public"));
+		    				break;
+		    		}
 		    		if(player.isOp()) {
 		    			player.sendMessage(TextValues.INFO + plugin.translateString("player-chest-interact-byOp"));
 		    		} else {
@@ -61,12 +77,12 @@ public class EventListener implements Listener {
 	    switch (block.getId()) {
 		    case Block.CHEST:
 	    		if(plugin.getSQL().isOwner(user, (int)block.getX(), (int)block.getY(), (int)block.getZ())) {
-		    		plugin.getSQL().deleteProtect(user, (int)block.getX(), (int)block.getY(), (int)block.getZ(), "normal");
+		    		plugin.getSQL().deleteProtect(user, (int)block.getX(), (int)block.getY(), (int)block.getZ());
 		    		player.sendMessage(TextValues.INFO + plugin.translateString("player-chest-break"));
 		    	} else {
 		    		if(player.isOp()) {
 		    			player.sendMessage(TextValues.INFO + plugin.translateString("player-chest-break-byOp"));
-		    			plugin.getSQL().deleteProtect(user, (int)block.getX(), (int)block.getY(), (int)block.getZ(), "normal");
+		    			plugin.getSQL().deleteProtect(user, (int)block.getX(), (int)block.getY(), (int)block.getZ());
 		    		} else {
 		    			event.setCancelled();
 			    		player.sendMessage(TextValues.ALERT + plugin.translateString("error-chest-break"));
@@ -83,7 +99,7 @@ public class EventListener implements Listener {
 	    Block block = event.getBlock();
 	    switch (block.getId()) {
 		    case Block.CHEST:
-		    	plugin.getSQL().addNormalProtect(owner, (int)block.getX(), (int)block.getY(), (int)block.getZ());
+		    	plugin.getSQL().addProtect(owner, (int)block.getX(), (int)block.getY(), (int)block.getZ(), "normal");
 		    	player.sendMessage(TextValues.INFO + plugin.translateString("player-chest-place"));
 		    	break;
 	    }

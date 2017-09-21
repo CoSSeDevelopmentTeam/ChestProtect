@@ -3,6 +3,7 @@ player-chest-place: "設置したチェストにノーマルロックが設定�
 player-chest-break: "チェストのロックが解除されました。"
 player-chest-break-byOp: "オペレーター権限によりチェストを撤去しました。"
 player-chest-interact-byOp: "オペレーター権限によりチェストを解錠しました。"
+player-chest-interact-type-public: "全体公開のチェストを解錠しました。"
 error-chest-break: "チェストのオーナーでないため撤去できません。"
 error-chest-interact: "チェストのオーナでないため開けられません。"
 error-command-message1: "適切な引数を入力してください。"

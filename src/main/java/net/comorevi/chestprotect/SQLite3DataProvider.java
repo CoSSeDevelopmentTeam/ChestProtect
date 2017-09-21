@@ -23,6 +23,8 @@ import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.HashMap;
+import java.util.Map;
 
 public class SQLite3DataProvider {
 
@@ -49,6 +51,23 @@ public class SQLite3DataProvider {
 		return false;
     }
     
+    public boolean existsOptionProtect(int x, int y, int z, String type) {
+    	if(existsProtect(x, y, z)) {
+    		try {
+    			ResultSet rs = statement.executeQuery("select * from protect where (xyz = '"+x+":"+y+":"+z+"')");
+				if(statement.executeQuery("select * from "+type+"_protect where (id = "+rs.getInt("id")+")") != null) {
+					return true;
+				} else {
+					return false;
+				}
+			} catch (SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+    	}
+		return false;
+    }
+    
     public boolean isOwner(String user, int x, int y, int z) {
     	if(existsProtect(x, y, z)) {
 			try {
@@ -66,32 +85,141 @@ public class SQLite3DataProvider {
     	return false;
     }
     
-    public void addNormalProtect(String owner, int x, int y, int z) {
+    public Map<String, Object> getProtectData(int x, int y, int z) {
+    	Map<String, Object> list = new HashMap<String, Object>();
     	try {
-			statement.executeUpdate("insert into protect(owner, xyz, type) values('"+owner+"', '"+x+":"+y+":"+z+"', 'normal')");
+			ResultSet rs = statement.executeQuery("select * from protect where (xyz = '"+x+":"+y+":"+z+"')");
+			while(rs.next()) {
+				list.put("id", rs.getInt("id"));
+				list.put("owner", rs.getString("owner"));
+				list.put("xyz", rs.getString("xyz"));
+				list.put("type", rs.getString("type"));
+			}
+			rs.close();
+			return list;
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return list;
+    }
+    
+    public Map<String, Object> getOptionProtectData(int id, String type) {
+    	Map<String, Object> list = new HashMap<String, Object>();
+    	try {
+			ResultSet rs = statement.executeQuery("select * from "+type+"_protect where (id = "+id+")");
+			while(rs.next()) {
+				list.put("data", rs.getString("data"));
+			}
+			rs.close();
+			return list;
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return list;
+    }
+    
+    public void addProtect(String owner, int x, int y, int z, String type) {
+    	try {
+			statement.executeUpdate("insert into protect(owner, xyz, type) values('"+owner+"', '"+x+":"+y+":"+z+"', '"+type+"')");
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
     }
     
-    public void deleteProtect(String user, int x, int y, int z, String type) {
+    public void addOptionProtect(String type, int x, int y, int z, String data) {
+    	try {
+			statement.executeUpdate("insert into "+type+"_protect(id, data) values("+statement.executeQuery("select id from protect where (xyz = '"+x+":"+y+":"+z+"')")+", '"+data+"')");
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+    }
+    
+    public void changeProtectType(String owner, int x, int y, int z, String type, String value) {
     	if(existsProtect(x, y, z)) {
-    		if(isOwner(user, x, y, z)) {
-				try {
-					ResultSet rs = statement.executeQuery("SELECT * from protect WHERE (xyz = '"+x+":"+y+":"+z+"')");
-					statement.executeUpdate("DELETE from protect WHERE id = "+ rs.getInt("id"));
-				} catch (SQLException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-    		} else {
-    			plugin.getServer().getPlayer(user).sendMessage(TextValues.ALERT + plugin.translateString("error-all"));
-    		}
-    	} else {
-    		plugin.getServer().getPlayer(user).sendMessage(TextValues.ALERT + plugin.translateString("error-all"));;
+			Map<String, Object> map = getProtectData(x, y, z);
+			switch((String) map.get("type")) {
+				case "normal":
+					try {
+						statement.executeUpdate("update protect set type = 'normal' where (xyz = '"+x+":"+y+":"+z+"')");
+						if(existsOptionProtect(x, y, z, type)) {
+							statement.executeUpdate("delete from "+type+"_protect where (id = "+(int) map.get("id")+")");
+						}
+					} catch (SQLException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+					break;
+				case "pass":
+					try {
+						statement.executeUpdate("update protect set type = 'pass' where (xyz = '"+x+":"+y+":"+z+"')");
+						if(existsOptionProtect(x, y, z, type)) {
+							statement.executeUpdate("delete from "+type+"_protect where (id = "+(int) map.get("id")+")");
+						}
+						addOptionProtect("pass", x, y, z, value);
+					} catch (SQLException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+					break;
+				case "share":
+					try {
+						statement.executeUpdate("update protect set type = 'share' where (xyz = '"+x+":"+y+":"+z+"')");
+						if(existsOptionProtect(x, y, z, type)) {
+							statement.executeUpdate("delete from "+type+"_protect where (id = "+(int) map.get("id")+")");
+						}
+						addOptionProtect("share", x, y, z, value);
+					} catch (SQLException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+					break;
+				case "public":
+					try {
+						statement.executeUpdate("update protect set type = 'public' where (xyz = '"+x+":"+y+":"+z+"')");
+						if(existsOptionProtect(x, y, z, type)) {
+							statement.executeUpdate("delete from "+type+"_protect where (id = "+(int) map.get("id")+")");
+						}
+					} catch (SQLException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+					break;
+			}
     	}
     }
+
+    public void deleteProtect(String user, int x, int y, int z) {
+    	if(existsProtect(x, y, z)) {
+			try {
+				Map<String, Object> map = getProtectData(x, y, z);
+				switch((String) map.get("type")) {
+					case "normal":
+						statement.executeUpdate("delete from protect where (id = "+(int) map.get("id")+")");
+						break;
+					case "pass":
+						statement.executeUpdate("delete from pass_protect where (id = "+(int) map.get("id")+")");
+						statement.executeUpdate("delete from protect where (id = "+(int) map.get("id")+")");
+						break;
+					case "share":
+						statement.executeUpdate("delete from share_protect where (id = "+(int) map.get("id")+")");
+						statement.executeUpdate("delete from protect where (id = "+(int) map.get("id")+")");
+						break;
+					case "public":
+						statement.executeUpdate("delete from protect where (id = "+(int) map.get("id")+")");
+						break;
+				}
+			} catch (SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		} else {
+			plugin.getServer().getPlayer(user).sendMessage(TextValues.ALERT + plugin.translateString("error-all"));
+		}
+	}
 
     public void connect(){
         try {
@@ -104,8 +232,9 @@ public class SQLite3DataProvider {
             connection = DriverManager.getConnection("jdbc:sqlite:" + plugin.getDataFolder().toString() + "/DataDB.db");
             statement = connection.createStatement();
             statement.setQueryTimeout(30);
-            statement.executeUpdate("create table if not exists protect (id integer primary key autoincrement, owner text not null, xyz String not null, type text not null)");
-            //statement.executeUpdate("CREATE table if not exists pass_protect (id integer not null, pass integer not null)");
+            statement.executeUpdate("create table if not exists protect (id integer primary key autoincrement, owner text not null, xyz text not null, type text not null)");
+            statement.executeUpdate("create table if not exists pass_protect (id integer not null, data text not null)");
+            statement.executeUpdate("create table if not exists share_protect (id integer not null, data text not null)");
         } catch(SQLException e) {
             System.err.println(e.getMessage());
         }
