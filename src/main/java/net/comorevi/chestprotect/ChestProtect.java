@@ -28,13 +28,11 @@ import java.io.PrintWriter;
 import java.util.HashMap;
 import java.util.Map;
 
-import cn.nukkit.Player;
 import cn.nukkit.command.Command;
 import cn.nukkit.command.CommandSender;
 import cn.nukkit.command.ConsoleCommandSender;
 import cn.nukkit.plugin.PluginBase;
 import cn.nukkit.utils.Config;
-import cn.nukkit.utils.TextFormat;
 import cn.nukkit.utils.Utils;
 
 public class ChestProtect extends PluginBase {
@@ -43,6 +41,8 @@ public class ChestProtect extends PluginBase {
     private Map<String, Object> configData = new HashMap<String, Object>();
     private Map<String, Object> pluginData = new HashMap<String, Object>();
     private Config conf;
+    
+    public static Map<String, String[]> optionData = new HashMap<String, String[]>();
     
     private SQLite3DataProvider sql;
 	private String debug;
@@ -79,12 +79,55 @@ public class ChestProtect extends PluginBase {
                 this.helpMessage(sender);
                 return true;
             }
-            
-            Player p = (Player)sender;
 
             switch(args[0]){
                 case "info":
                 	sender.sendMessage("このコマンドは未実装です。");
+                	break;
+                case "type":
+                	if(!(args.length <= 1)) {
+                		switch(args[1]) {
+                			case "normal":
+	            				String[] str_normal = {"normal", null};
+	            				optionData.put(sender.getName(), str_normal);
+	            				sender.sendMessage(TextValues.INFO + this.translateString("player-command-message1"));
+	            				break;
+	            			case "public":
+	            				String[] str_public = {"public", null};
+	            				optionData.put(sender.getName(), str_public);
+	            				sender.sendMessage(TextValues.INFO + this.translateString("player-command-message1"));
+	            				break;
+                		}
+                	} else if(!(args.length <= 2)) {
+                		switch(args[1]) {
+                			case "pass":
+                				String[] str_pass = {"pass", args[2]};
+                				optionData.put(sender.getName(), str_pass);
+                				sender.sendMessage(TextValues.INFO + this.translateString("player-command-message1"));
+                				break;
+                			case "share":
+                				String[] str_share = {"share", null};
+                				optionData.put(sender.getName(), str_share);
+                				sender.sendMessage(TextValues.INFO + this.translateString("player-command-message1"));
+                				break;
+                			default:
+                				sender.sendMessage(TextValues.HELP + "/chest type [ normal | pass | share | public ]");
+                				break;
+                		}
+                	}
+                	break;
+                case "share":
+                	if(args.length <= 1) {
+                		sender.sendMessage(TextValues.HELP + "/chest share [ target ]");
+                	} else {
+                		if(new File(getServer().getFilePath().toString() + "/"+sender.getName().toLowerCase()+".dat").exists()) {
+                			String[] str_share = {"share", args[2]};
+            				optionData.put(sender.getName(), str_share);
+            				sender.sendMessage(TextValues.INFO + this.translateString("player-command-message1"));
+                		} else {
+                			sender.sendMessage(TextValues.ALERT + this.translateString("error-command-message4"));
+                		}
+                	}
                 	break;
             }
         }

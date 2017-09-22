@@ -9,4 +9,3 @@ description: CoSSeのチェストロックプラグイン
 commands:
   chest:
     description: ChestProtectのマスターコマンド
-    usage: "/warp [ info ]"

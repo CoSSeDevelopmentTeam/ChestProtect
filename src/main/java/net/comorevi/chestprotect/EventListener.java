@@ -43,26 +43,78 @@ public class EventListener implements Listener {
 	    Block block = event.getBlock();
 	    switch (block.getId()) {
 		    case Block.CHEST:
-		    	if(!plugin.getSQL().isOwner(user, (int)block.getX(), (int)block.getY(), (int)block.getZ())) {
-		    		Map<String, Object> map = plugin.getSQL().getProtectData((int)block.getX(), (int)block.getY(), (int)block.getZ());
-		    		switch((String) map.get("type")) {
-		    			case "pass":
-		    				event.setCancelled();
-		    				player.sendMessage(TextValues.INFO + plugin.translateString("error-all"));
-		    				break;
-		    			case "share":
-		    				//Map<String, Object> sharedata = plugin.getSQL().getOptionProtectData((int) map.get("id"), (String) map.get("type"));
-		    				//,が含まれてるか。含まれてなければそのまま比較、含まれてたら分割して配列内にあるか確認
-		    				break;
-		    			case "public":
-		    				player.sendMessage(TextValues.INFO + plugin.translateString("player-chest-interact-type-public"));
-		    				break;
+		    	if(plugin.getSQL().isOwner(user, (int)block.getX(), (int)block.getY(), (int)block.getZ())) {
+		    		Map<String, String[]> optionData = ChestProtect.optionData;
+		    		if(optionData.containsKey(user)) {
+		    			String[] str = optionData.get(user);
+		    			switch(str[0]) {
+		    				case "normal":
+		    					event.setCancelled();
+		    					plugin.getSQL().changeProtectType(user, (int)block.getX(), (int)block.getY(), (int)block.getZ(), str[0], null);
+		    					player.sendMessage(TextValues.INFO + plugin.translateString("player-chest-protect-normal"));
+		    					optionData.remove(user);
+		    					break;
+		    				case "pass":
+		    					event.setCancelled();
+		    					plugin.getSQL().changeProtectType(user, (int)block.getX(), (int)block.getY(), (int)block.getZ(), str[0], str[1]);
+		    					player.sendMessage(TextValues.INFO + plugin.translateString("player-chest-protect-pass"));
+		    					optionData.remove(user);
+		    					break;
+		    				case "share":
+		    					event.setCancelled();
+		    					Map<String, Object> map1 = plugin.getSQL().getOptionProtectData((int) plugin.getSQL().getProtectData((int)block.getX(), (int)block.getY(), (int)block.getZ()).get("id"), "share");
+		    					plugin.getSQL().changeProtectType(user, (int)block.getX(), (int)block.getY(), (int)block.getZ(), str[0], (String) map1.get("data"));
+		    					optionData.remove(user);
+		    					player.sendMessage(TextValues.INFO + plugin.translateString("player-chest-protect-share"));
+		    					break;
+		    				case "addshare":
+		    					event.setCancelled();
+		    					Map<String, Object> map2 = plugin.getSQL().getOptionProtectData((int) plugin.getSQL().getProtectData((int)block.getX(), (int)block.getY(), (int)block.getZ()).get("id"), "share");
+		    					plugin.getSQL().changeProtectType(user, (int)block.getX(), (int)block.getY(), (int)block.getZ(), str[0], map2.get("data")+","+str[1]);
+		    					optionData.remove(user);
+		    					player.sendMessage(TextValues.INFO + plugin.translateString("player-chest-protect-share"));
+		    					break;
+		    				case "public":
+		    					event.setCancelled();
+		    					plugin.getSQL().changeProtectType(user, (int)block.getX(), (int)block.getY(), (int)block.getZ(), str[0], null);
+		    					player.sendMessage(TextValues.INFO + plugin.translateString("player-chest-protect-public"));
+		    					optionData.remove(user);
+		    					break;
+		    			}
 		    		}
+		    	} else {
 		    		if(player.isOp()) {
 		    			player.sendMessage(TextValues.INFO + plugin.translateString("player-chest-interact-byOp"));
 		    		} else {
-		    			event.setCancelled();
-			    		player.sendMessage(TextValues.INFO + plugin.translateString("error-chest-interact"));
+		    			Map<String, Object> map = plugin.getSQL().getProtectData((int)block.getX(), (int)block.getY(), (int)block.getZ());
+			    		switch((String) map.get("type")) {
+			    			case "normal":
+			    				event.setCancelled();
+			    				player.sendMessage(TextValues.INFO + plugin.translateString("error-chest-interact"));
+			    				break;
+			    			case "pass":
+			    				event.setCancelled();
+			    				player.sendMessage(TextValues.INFO + plugin.translateString("error-all"));
+			    				break;
+			    			case "share":
+			    				Map<String, Object> shareData = plugin.getSQL().getOptionProtectData((int) map.get("id"), (String) map.get("type"));
+			    				if(shareData.get("data").toString().contains(",")) {
+			    					String[] list = shareData.get("data").toString().split(",");
+			    					if(!list.equals(user)) {
+			    						event.setCancelled();
+			    						player.sendMessage(TextValues.ALERT + plugin.translateString("error-chest-interact"));
+			    					}
+			    				} else {
+			    					if(!shareData.get("data").equals(user)) {
+			    						event.setCancelled();
+			    						player.sendMessage(TextValues.ALERT + plugin.translateString("error-chest-interact"));
+			    					}
+			    				}
+			    				break;
+			    			case "public":
+			    				player.sendMessage(TextValues.INFO + plugin.translateString("player-chest-interact-type-public"));
+			    				break;
+			    		}
 		    		}	
 		    	}
 		    	break;

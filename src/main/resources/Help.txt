@@ -7,11 +7,8 @@
 ##
 §aChestProtect §fヘルプ
 §e/chest info  §fチェストのロック情報を確認します。(未実装)
-§e/chest unlock  §fチェストのロックを解除します。(未実装)
-§e/chest public  §fロックモードを共有に変更します。(未実装)
-§e/chest passlock [PASS]  §fロックモードをパスワードロックに変更します。(未実装)
+§e/chest type [type]  §fロックモードを[type]に変更します。(未実装)
 §e/chest passunlock [PASS]  §fパスワードロックを解除します。(未実装)
-::op
 ::all
 §d開発 - CosmoSunriseServerPluginEditorsTeam
 §f[Java版]popkechupki
