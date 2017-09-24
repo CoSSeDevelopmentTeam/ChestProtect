@@ -112,9 +112,13 @@ public class ChestProtect extends PluginBase {
                 				sender.sendMessage(TextValues.INFO + this.translateString("player-command-message1"));
                 				break;
                 			case "share":
-                				String[] str_share = {"share", args[2]};
-                				optionData.put(sender.getName(), str_share);
-                				sender.sendMessage(TextValues.INFO + this.translateString("player-command-message1"));
+                				if(new File(getServer().getFilePath().toString() + "/players/"+args[2].toLowerCase()+".dat").exists()) {
+                        			String[] str_share = {"share", args[2]};
+                    				optionData.put(sender.getName(), str_share);
+                    				sender.sendMessage(TextValues.INFO + this.translateString("player-command-message1"));
+                        		} else {
+                        			sender.sendMessage(TextValues.ALERT + this.translateString("error-command-message4"));
+                        		}
                 				break;
                 			case "addshare":
                 				if(new File(getServer().getFilePath().toString() + "/players/"+args[2].toLowerCase()+".dat").exists()) {
@@ -125,19 +129,6 @@ public class ChestProtect extends PluginBase {
                         			sender.sendMessage(TextValues.ALERT + this.translateString("error-command-message4"));
                         		}
                 				break;
-                		}
-                	}
-                	break;
-                case "share":
-                	if(args.length <= 1) {
-                		sender.sendMessage(TextValues.HELP + "/chest share [ target ]");
-                	} else {
-                		if(new File(getServer().getFilePath().toString() + "/players/"+sender.getName().toLowerCase()+".dat").exists()) {
-                			String[] str_share = {"addshare", args[1]};
-            				optionData.put(sender.getName(), str_share);
-            				sender.sendMessage(TextValues.INFO + this.translateString("player-command-message1"));
-                		} else {
-                			sender.sendMessage(TextValues.ALERT + this.translateString("error-command-message4"));
                 		}
                 	}
                 	break;
