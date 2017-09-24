@@ -27,6 +27,7 @@ import cn.nukkit.event.Listener;
 import cn.nukkit.event.block.BlockBreakEvent;
 import cn.nukkit.event.block.BlockPlaceEvent;
 import cn.nukkit.event.player.PlayerInteractEvent;
+import cn.nukkit.event.player.PlayerQuitEvent;
 
 public class EventListener implements Listener {
 	
@@ -34,6 +35,15 @@ public class EventListener implements Listener {
 
 	public EventListener(ChestProtect plugin) {
 		this.plugin = plugin;
+	}
+	
+	@EventHandler
+	public void onQuit(PlayerQuitEvent event) {
+		String user = event.getPlayer().getName();
+		Map<String, String[]> optionData = ChestProtect.optionData;
+		if(optionData.containsKey(user)) {
+			optionData.remove(user);
+		}
 	}
 
 	@EventHandler
@@ -62,17 +72,22 @@ public class EventListener implements Listener {
 		    					break;
 		    				case "share":
 		    					event.setCancelled();
-		    					Map<String, Object> map1 = plugin.getSQL().getOptionProtectData((int) plugin.getSQL().getProtectData((int)block.getX(), (int)block.getY(), (int)block.getZ()).get("id"), "share");
-		    					plugin.getSQL().changeProtectType(user, (int)block.getX(), (int)block.getY(), (int)block.getZ(), str[0], (String) map1.get("data"));
-		    					optionData.remove(user);
+	    						plugin.getSQL().changeProtectType(user, (int)block.getX(), (int)block.getY(), (int)block.getZ(), str[0], str[1]);
 		    					player.sendMessage(TextValues.INFO + plugin.translateString("player-chest-protect-share"));
+		    					optionData.remove(user);
 		    					break;
 		    				case "addshare":
 		    					event.setCancelled();
-		    					Map<String, Object> map2 = plugin.getSQL().getOptionProtectData((int) plugin.getSQL().getProtectData((int)block.getX(), (int)block.getY(), (int)block.getZ()).get("id"), "share");
-		    					plugin.getSQL().changeProtectType(user, (int)block.getX(), (int)block.getY(), (int)block.getZ(), str[0], map2.get("data")+","+str[1]);
+		    					if(plugin.getSQL().existsOptionProtect((int)block.getX(), (int)block.getY(), (int)block.getZ())) {
+		    						Map<String, Object> map2 = plugin.getSQL().getOptionProtectData((int) plugin.getSQL().getProtectData((int)block.getX(), (int)block.getY(), (int)block.getZ()).get("id"));
+			    					if(map2.get("data").toString().contains(str[1])) {
+			    						player.sendMessage(TextValues.INFO + plugin.translateString("error-chest-addshare"));
+			    					} else {
+			    						plugin.getSQL().changeProtectType(user, (int)block.getX(), (int)block.getY(), (int)block.getZ(), str[0], map2.get("data")+","+str[1]);
+				    					player.sendMessage(TextValues.INFO + plugin.translateString("player-chest-protect-addshare", str[1]));
+			    					}
+		    					}
 		    					optionData.remove(user);
-		    					player.sendMessage(TextValues.INFO + plugin.translateString("player-chest-protect-share"));
 		    					break;
 		    				case "public":
 		    					event.setCancelled();
@@ -97,18 +112,10 @@ public class EventListener implements Listener {
 			    				player.sendMessage(TextValues.INFO + plugin.translateString("error-all"));
 			    				break;
 			    			case "share":
-			    				Map<String, Object> shareData = plugin.getSQL().getOptionProtectData((int) map.get("id"), (String) map.get("type"));
-			    				if(shareData.get("data").toString().contains(",")) {
-			    					String[] list = shareData.get("data").toString().split(",");
-			    					if(!list.equals(user)) {
-			    						event.setCancelled();
-			    						player.sendMessage(TextValues.ALERT + plugin.translateString("error-chest-interact"));
-			    					}
-			    				} else {
-			    					if(!shareData.get("data").equals(user)) {
-			    						event.setCancelled();
-			    						player.sendMessage(TextValues.ALERT + plugin.translateString("error-chest-interact"));
-			    					}
+			    				Map<String, Object> shareData = plugin.getSQL().getOptionProtectData((int) map.get("id"));
+			    				if(!shareData.get("data").toString().contains(user)) {
+			    					event.setCancelled();
+			    					player.sendMessage(TextValues.INFO + plugin.translateString("error-chest-interact"));
 			    				}
 			    				break;
 			    			case "public":

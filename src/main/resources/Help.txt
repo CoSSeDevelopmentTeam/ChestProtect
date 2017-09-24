@@ -6,9 +6,9 @@
 ##::allタグをつけるとそれ以降は権限関係なく全員に送られます。
 ##
 §aChestProtect §fヘルプ
-§e/chest info  §fチェストのロック情報を確認します。(未実装)
-§e/chest type [type]  §fロックモードを[type]に変更します。(未実装)
-§e/chest passunlock [PASS]  §fパスワードロックを解除します。(未実装)
+§e/chest info  §fチェストのロック情報を確認します。
+§e/chest mode [ normal | public | pass | share | addshare ]  §fロックモードを変更したり共有メンバーを増やします。(一部未実装)
+§e/chest passunlock [password]  §fパスワードロックを解除します。(未実装)
 ::all
 §d開発 - CosmoSunriseServerPluginEditorsTeam
 §f[Java版]popkechupki

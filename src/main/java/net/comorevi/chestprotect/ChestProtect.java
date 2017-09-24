@@ -74,18 +74,21 @@ public class ChestProtect extends PluginBase {
                 return true;
             }
 
-            try{if(args[0] != null){}}
-            catch(ArrayIndexOutOfBoundsException e){
+            try {
+            	if(args[0] != null);
+            } catch(ArrayIndexOutOfBoundsException e) {
                 this.helpMessage(sender);
                 return true;
             }
 
-            switch(args[0]){
+            switch(args[0]) {
                 case "info":
                 	sender.sendMessage("このコマンドは未実装です。");
                 	break;
-                case "type":
-                	if(!(args.length <= 1)) {
+                case "mode":
+                	if(args.length <= 1) {
+                		sender.sendMessage(TextValues.HELP + "/chest mode [type]");
+                	} else {
                 		switch(args[1]) {
                 			case "normal":
 	            				String[] str_normal = {"normal", null};
@@ -98,7 +101,10 @@ public class ChestProtect extends PluginBase {
 	            				sender.sendMessage(TextValues.INFO + this.translateString("player-command-message1"));
 	            				break;
                 		}
-                	} else if(!(args.length <= 2)) {
+                	}
+                	if(args.length <= 2) {
+                		sender.sendMessage(TextValues.HELP + "/chest [ pass | share | addshare ] [ value ]");
+                	} else {
                 		switch(args[1]) {
                 			case "pass":
                 				String[] str_pass = {"pass", args[2]};
@@ -106,12 +112,18 @@ public class ChestProtect extends PluginBase {
                 				sender.sendMessage(TextValues.INFO + this.translateString("player-command-message1"));
                 				break;
                 			case "share":
-                				String[] str_share = {"share", null};
+                				String[] str_share = {"share", args[2]};
                 				optionData.put(sender.getName(), str_share);
                 				sender.sendMessage(TextValues.INFO + this.translateString("player-command-message1"));
                 				break;
-                			default:
-                				sender.sendMessage(TextValues.HELP + "/chest type [ normal | pass | share | public ]");
+                			case "addshare":
+                				if(new File(getServer().getFilePath().toString() + "/players/"+args[2].toLowerCase()+".dat").exists()) {
+                        			String[] str_addshare = {"addshare", args[2]};
+                    				optionData.put(sender.getName(), str_addshare);
+                    				sender.sendMessage(TextValues.INFO + this.translateString("player-command-message1"));
+                        		} else {
+                        			sender.sendMessage(TextValues.ALERT + this.translateString("error-command-message4"));
+                        		}
                 				break;
                 		}
                 	}
@@ -120,8 +132,8 @@ public class ChestProtect extends PluginBase {
                 	if(args.length <= 1) {
                 		sender.sendMessage(TextValues.HELP + "/chest share [ target ]");
                 	} else {
-                		if(new File(getServer().getFilePath().toString() + "/"+sender.getName().toLowerCase()+".dat").exists()) {
-                			String[] str_share = {"share", args[2]};
+                		if(new File(getServer().getFilePath().toString() + "/players/"+sender.getName().toLowerCase()+".dat").exists()) {
+                			String[] str_share = {"addshare", args[1]};
             				optionData.put(sender.getName(), str_share);
             				sender.sendMessage(TextValues.INFO + this.translateString("player-command-message1"));
                 		} else {

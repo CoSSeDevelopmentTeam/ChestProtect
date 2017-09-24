@@ -55,9 +55,7 @@ public class SQLite3DataProvider {
     	if(existsProtect(x, y, z)) {
     		try {
     			ResultSet rs = statement.executeQuery("select * from protect where (xyz = '"+x+":"+y+":"+z+"')");
-				if(statement.executeQuery("select * from pass_protect where (id = "+rs.getInt("id")+")") != null) {
-					return true;
-				} else if(statement.executeQuery("select * from share_protect where (id = "+rs.getInt("id")+")") != null) {
+				if(statement.executeQuery("select * from option_protect where (id = "+rs.getInt("id")+")") != null) {
 					return true;
 				} else {
 					return false;
@@ -106,7 +104,7 @@ public class SQLite3DataProvider {
 		return list;
     }
     
-    public Map<String, Object> getOptionProtectData(int id, String type) {
+    public Map<String, Object> getOptionProtectData(int id) {
     	Map<String, Object> list = new HashMap<String, Object>();
     	try {
 			ResultSet rs = statement.executeQuery("select * from option_protect where (id = "+id+")");
@@ -124,7 +122,7 @@ public class SQLite3DataProvider {
     
     public void addProtect(String owner, int x, int y, int z, String type) {
     	try {
-			statement.executeUpdate("insert into protect(owner, xyz, type) values('"+owner+"', '"+x+":"+y+":"+z+"', 'option')");
+			statement.executeUpdate("insert into protect(owner, xyz, type) values('"+owner+"', '"+x+":"+y+":"+z+"', '"+type+"')");
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -133,7 +131,8 @@ public class SQLite3DataProvider {
     
     public void addOptionProtect(String type, int x, int y, int z, String data) {
     	try {
-			statement.executeUpdate("insert into option_protect(id, data) values("+statement.executeQuery("select id from protect where (xyz = '"+x+":"+y+":"+z+"')")+", '"+data+"')");
+    		Map<String, Object> map = getProtectData(x, y, z);
+			statement.executeUpdate("insert into option_protect(id, data) values("+(int) map.get("id")+", '"+data+"')");
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -143,7 +142,7 @@ public class SQLite3DataProvider {
     public void changeProtectType(String owner, int x, int y, int z, String type, String value) {
     	if(existsProtect(x, y, z)) {
 			Map<String, Object> map = getProtectData(x, y, z);
-			switch((String) map.get("type")) {
+			switch(type) {
 				case "normal":
 					try {
 						statement.executeUpdate("update protect set type = 'normal' where (xyz = '"+x+":"+y+":"+z+"')");
@@ -179,6 +178,14 @@ public class SQLite3DataProvider {
 						e.printStackTrace();
 					}
 					break;
+				case "addshare":
+					try {
+						statement.executeUpdate("update option_protect set data = '"+value+"' where (id = "+(int) map.get("id")+")");
+					} catch (SQLException e1) {
+						// TODO Auto-generated catch block
+						e1.printStackTrace();
+					}
+					break;
 				case "public":
 					try {
 						statement.executeUpdate("update protect set type = 'public' where (xyz = '"+x+":"+y+":"+z+"')");
@@ -200,17 +207,12 @@ public class SQLite3DataProvider {
 				Map<String, Object> map = getProtectData(x, y, z);
 				switch((String) map.get("type")) {
 					case "normal":
+					case "public":
 						statement.executeUpdate("delete from protect where (id = "+(int) map.get("id")+")");
 						break;
 					case "pass":
-						statement.executeUpdate("delete from pass_protect where (id = "+(int) map.get("id")+")");
-						statement.executeUpdate("delete from protect where (id = "+(int) map.get("id")+")");
-						break;
 					case "share":
-						statement.executeUpdate("delete from share_protect where (id = "+(int) map.get("id")+")");
-						statement.executeUpdate("delete from protect where (id = "+(int) map.get("id")+")");
-						break;
-					case "public":
+						statement.executeUpdate("delete from option_protect where (id = "+(int) map.get("id")+")");
 						statement.executeUpdate("delete from protect where (id = "+(int) map.get("id")+")");
 						break;
 				}
@@ -248,9 +250,14 @@ public class SQLite3DataProvider {
                 System.out.println("id = " + rs.getInt("id"));
                 System.out.println("owner = " + rs.getString("owner"));
                 System.out.println("xyz = " + rs.getString("xyz"));
-                System.out.println("type = " + rs.getInt("type"));
+                System.out.println("type = " + rs.getString("type"));
             }
             rs.close();
+            ResultSet option_rs = statement.executeQuery("select * from option_protect");
+            while(option_rs.next()) {
+            	System.out.println("id = " + rs.getInt("id"));
+                System.out.println("data = " + rs.getString("data"));
+            }
         } catch (SQLException e) {
             System.err.println(e.getMessage());
         }
