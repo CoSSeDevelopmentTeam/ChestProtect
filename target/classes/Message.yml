@@ -12,6 +12,7 @@ player-chest-protect-public: "チェストの保護モードをpublicに設定�
 player-command-message1: "操作対象のチェストをタッチしてください。"
 error-chest-break: "チェストのオーナーでないため撤去できません。"
 error-chest-interact: "チェストのオーナでないため開けられません。"
+error-chest-interact-pass: "入力されたパスワードではこのチェストを開けられません。"
 error-chest-addshare: "指定されたプレイヤーは既にチェストを共有しています。"
 error-command-message1: "適切な引数を入力してください。"
 error-command-message2: "{%0}番目の引数には数値を入力してください。"

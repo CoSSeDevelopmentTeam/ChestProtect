@@ -102,17 +102,25 @@ public class EventListener implements Listener {
 		    			player.sendMessage(TextValues.INFO + plugin.translateString("player-chest-interact-byOp"));
 		    		} else {
 		    			Map<String, Object> map = plugin.getSQL().getProtectData((int)block.getX(), (int)block.getY(), (int)block.getZ());
+		    			Map<String, Object> shareData = plugin.getSQL().getOptionProtectData((int) map.get("id"));
 			    		switch((String) map.get("type")) {
 			    			case "normal":
 			    				event.setCancelled();
 			    				player.sendMessage(TextValues.INFO + plugin.translateString("error-chest-interact"));
 			    				break;
 			    			case "pass":
-			    				event.setCancelled();
-			    				player.sendMessage(TextValues.INFO + plugin.translateString("error-all"));
+			    				if(ChestProtect.optionData.containsKey(user)) {
+			    					if(!shareData.get("data").toString().equals(ChestProtect.optionData.get(user)[1])) {
+				    					event.setCancelled();
+				    					player.sendMessage(TextValues.INFO + plugin.translateString("error-chest-interact-pass"));
+				    				}
+			    					ChestProtect.optionData.remove(user);
+			    				} else {
+			    					event.setCancelled();
+			    					player.sendMessage(TextValues.INFO + plugin.translateString("error-chest-interact"));
+			    				}
 			    				break;
 			    			case "share":
-			    				Map<String, Object> shareData = plugin.getSQL().getOptionProtectData((int) map.get("id"));
 			    				if(!shareData.get("data").toString().contains(user)) {
 			    					event.setCancelled();
 			    					player.sendMessage(TextValues.INFO + plugin.translateString("error-chest-interact"));

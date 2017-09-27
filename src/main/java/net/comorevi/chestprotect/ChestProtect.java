@@ -103,10 +103,11 @@ public class ChestProtect extends PluginBase {
                 		}
                 	}
                 	if(args.length <= 2) {
-                		sender.sendMessage(TextValues.HELP + "/chest [ pass | share | addshare ] [ value ]");
+                		sender.sendMessage(TextValues.HELP + "/chest [ pass(passunlock) | share | addshare ] [ value ]");
                 	} else {
                 		switch(args[1]) {
                 			case "pass":
+                			case "passunlock":
                 				String[] str_pass = {"pass", args[2]};
                 				optionData.put(sender.getName(), str_pass);
                 				sender.sendMessage(TextValues.INFO + this.translateString("player-command-message1"));
