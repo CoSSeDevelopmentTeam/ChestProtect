@@ -58,6 +58,17 @@ public class EventListener implements Listener {
 		    		if(optionData.containsKey(user)) {
 		    			String[] str = optionData.get(user);
 		    			switch(str[0]) {
+		    				case "info":
+		    					event.setCancelled();
+		    					Map<String, Object> protectData = plugin.getSQL().getProtectData((int)block.getX(), (int)block.getY(), (int)block.getZ());
+		    					if(protectData.get("type").toString().equals("share") || protectData.toString().equals("pass")) {
+		    						Map<String, Object> optionProtectData = plugin.getSQL().getOptionProtectData((int) protectData.get("id"));
+		    						player.sendMessage(TextValues.INFO + plugin.translateString("player-chest-optionprotect-info", protectData.get("id").toString(), protectData.get("owner").toString(), protectData.get("xyz").toString(), protectData.get("type").toString(), optionProtectData.get("data").toString()));
+		    					} else {
+		    						player.sendMessage(TextValues.INFO + plugin.translateString("player-chest-protect-info", protectData.get("id").toString(), protectData.get("owner").toString(), protectData.get("xyz").toString(), protectData.get("type").toString()));
+		    					}
+		    					optionData.remove(user);
+		    					break;
 		    				case "normal":
 		    					event.setCancelled();
 		    					plugin.getSQL().changeProtectType(user, (int)block.getX(), (int)block.getY(), (int)block.getZ(), str[0], null);

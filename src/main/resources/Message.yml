@@ -9,6 +9,8 @@ player-chest-protect-pass: "チェストの保護モードをpassに設定しま
 player-chest-protect-share: "チェストの保護モードをshareに設定しました。"
 player-chest-protect-addshare: "チェスト共有に{%0}さんを追加しました。"
 player-chest-protect-public: "チェストの保護モードをpublicに設定しました。"
+player-chest-optionprotect-info: "次のチェストの情報は次の通りです。\nID: {%0}\nOWNER: {%1}\nXYZ: {%2}\nTYPE: {%3}\nOPTION_DATA: {%4}"
+player-chest-protect-info: "次のチェストの情報は次の通りです。\nID: {%0}\nOWNER: {%1}\nXYZ: {%2}\nTYPE: {%3}"
 player-command-message1: "操作対象のチェストをタッチしてください。"
 error-chest-break: "チェストのオーナーでないため撤去できません。"
 error-chest-interact: "チェストのオーナでないため開けられません。"

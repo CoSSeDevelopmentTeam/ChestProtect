@@ -83,7 +83,9 @@ public class ChestProtect extends PluginBase {
 
             switch(args[0]) {
                 case "info":
-                	sender.sendMessage("このコマンドは未実装です。");
+                	String[] str_info = {"info", null};
+                	optionData.put(sender.getName(), str_info);
+                	sender.sendMessage(TextValues.INFO + this.translateString("player-command-message1"));
                 	break;
                 case "mode":
                 	if(args.length <= 1) {
