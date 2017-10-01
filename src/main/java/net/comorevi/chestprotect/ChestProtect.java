@@ -36,39 +36,49 @@ import cn.nukkit.command.ConsoleCommandSender;
 import cn.nukkit.plugin.PluginBase;
 import cn.nukkit.utils.Config;
 import cn.nukkit.utils.Utils;
+import net.comorevi.moneysland.MoneySLand;
+import net.comorevi.moneysland.TextValues;
 
 public class ChestProtect extends PluginBase {
-	
-	private Config translateFile;
+
+    private Config translateFile;
     private Map<String, Object> configData = new HashMap<String, Object>();
     private Map<String, Object> pluginData = new HashMap<String, Object>();
     public static List<String> notAllowedWorld = new ArrayList<String>();
     private Config conf;
-    
+
     public static Map<String, String[]> optionData = new HashMap<String, String[]>();
-    
+
     private SQLite3DataProvider sql;
-	private String debug;
-	
-	@Override
-	public void onEnable() {
-		
-		this.getDataFolder().mkdir();
-		this.initMessageConfig();
+    private String debug;
+    private MoneySLand land;
+
+    @Override
+    public void onEnable() {
+
+        this.getDataFolder().mkdir();
+        this.initMessageConfig();
         this.initChestProtectConfig();
         this.initHelpFile();
-		
-		this.sql = new SQLite3DataProvider(this);
-        getServer().getPluginManager().registerEvents(new EventListener(this), this);
-        
-        if(debug.equals("true")) {
-        	sql.printAllData();
+
+        try{
+            this.land = (MoneySLand) this.getServer().getPluginManager().getPlugin("MoneySAPI");
+        }catch(Exception e){
+            this.getLogger().alert(TextValues.ALERT + this.translateString("error-no-moneysland"));
+            this.getServer().getPluginManager().disablePlugin(this);
         }
-		
-	}
-	
-	@Override
-	public boolean onCommand(final CommandSender sender, Command command, String label, String[] args){
+
+        this.sql = new SQLite3DataProvider(this);
+        getServer().getPluginManager().registerEvents(new EventListener(this), this);
+
+        if(debug.equals("true")) {
+            sql.printAllData();
+        }
+
+    }
+
+    @Override
+    public boolean onCommand(final CommandSender sender, Command command, String label, String[] args){
 
         if(command.getName().equals("chest")){
 
@@ -78,7 +88,7 @@ public class ChestProtect extends PluginBase {
             }
 
             try {
-            	if(args[0] != null);
+                if(args[0] != null);
             } catch(ArrayIndexOutOfBoundsException e) {
                 this.helpMessage(sender);
                 return true;
@@ -86,68 +96,72 @@ public class ChestProtect extends PluginBase {
 
             switch(args[0]) {
                 case "info":
-                	String[] str_info = {"info", null};
-                	optionData.put(sender.getName(), str_info);
-                	sender.sendMessage(TextValues.INFO + this.translateString("player-command-message1"));
-                	break;
+                    String[] str_info = {"info", null};
+                    optionData.put(sender.getName(), str_info);
+                    sender.sendMessage(TextValues.INFO + this.translateString("player-command-message1"));
+                    break;
                 case "mode":
-                	if(args.length <= 1) {
-                		sender.sendMessage(TextValues.HELP + "/chest mode [type]");
-                	} else {
-                		switch(args[1]) {
-                			case "normal":
-	            				String[] str_normal = {"normal", null};
-	            				optionData.put(sender.getName(), str_normal);
-	            				sender.sendMessage(TextValues.INFO + this.translateString("player-command-message1"));
-	            				break;
-	            			case "public":
-	            				String[] str_public = {"public", null};
-	            				optionData.put(sender.getName(), str_public);
-	            				sender.sendMessage(TextValues.INFO + this.translateString("player-command-message1"));
-	            				break;
-                		}
-                	}
-                	if(args.length <= 2) {
-                		sender.sendMessage(TextValues.HELP + "/chest [ pass(passunlock) | share | addshare ] [ value ]");
-                	} else {
-                		switch(args[1]) {
-                			case "pass":
-                			case "passunlock":
-                				String[] str_pass = {"pass", args[2]};
-                				optionData.put(sender.getName(), str_pass);
-                				sender.sendMessage(TextValues.INFO + this.translateString("player-command-message1"));
-                				break;
-                			case "share":
-                				if(new File(getServer().getFilePath().toString() + "/players/"+args[2].toLowerCase()+".dat").exists()) {
-                        			String[] str_share = {"share", args[2]};
-                    				optionData.put(sender.getName(), str_share);
-                    				sender.sendMessage(TextValues.INFO + this.translateString("player-command-message1"));
-                        		} else {
-                        			sender.sendMessage(TextValues.ALERT + this.translateString("error-command-message4"));
-                        		}
-                				break;
-                			case "addshare":
-                				if(new File(getServer().getFilePath().toString() + "/players/"+args[2].toLowerCase()+".dat").exists()) {
-                        			String[] str_addshare = {"addshare", args[2]};
-                    				optionData.put(sender.getName(), str_addshare);
-                    				sender.sendMessage(TextValues.INFO + this.translateString("player-command-message1"));
-                        		} else {
-                        			sender.sendMessage(TextValues.ALERT + this.translateString("error-command-message4"));
-                        		}
-                				break;
-                		}
-                	}
-                	break;
+                    if(args.length <= 1) {
+                        sender.sendMessage(TextValues.HELP + "/chest mode [type]");
+                    } else {
+                        switch(args[1]) {
+                            case "normal":
+                                String[] str_normal = {"normal", null};
+                                optionData.put(sender.getName(), str_normal);
+                                sender.sendMessage(TextValues.INFO + this.translateString("player-command-message1"));
+                                break;
+                            case "public":
+                                String[] str_public = {"public", null};
+                                optionData.put(sender.getName(), str_public);
+                                sender.sendMessage(TextValues.INFO + this.translateString("player-command-message1"));
+                                break;
+                        }
+                    }
+                    if(args.length <= 2) {
+                        sender.sendMessage(TextValues.HELP + "/chest [ pass(passunlock) | share | addshare ] [ value ]");
+                    } else {
+                        switch(args[1]) {
+                            case "pass":
+                            case "passunlock":
+                                String[] str_pass = {"pass", args[2]};
+                                optionData.put(sender.getName(), str_pass);
+                                sender.sendMessage(TextValues.INFO + this.translateString("player-command-message1"));
+                                break;
+                            case "share":
+                                if(new File(getServer().getFilePath().toString() + "/players/"+args[2].toLowerCase()+".dat").exists()) {
+                                    String[] str_share = {"share", args[2]};
+                                    optionData.put(sender.getName(), str_share);
+                                    sender.sendMessage(TextValues.INFO + this.translateString("player-command-message1"));
+                                } else {
+                                    sender.sendMessage(TextValues.ALERT + this.translateString("error-command-message4"));
+                                }
+                                break;
+                            case "addshare":
+                                if(new File(getServer().getFilePath().toString() + "/players/"+args[2].toLowerCase()+".dat").exists()) {
+                                    String[] str_addshare = {"addshare", args[2]};
+                                    optionData.put(sender.getName(), str_addshare);
+                                    sender.sendMessage(TextValues.INFO + this.translateString("player-command-message1"));
+                                } else {
+                                    sender.sendMessage(TextValues.ALERT + this.translateString("error-command-message4"));
+                                }
+                                break;
+                        }
+                    }
+                    break;
             }
         }
         return false;
     }
-	
-	public SQLite3DataProvider getSQL() {
-		return this.sql;
-	}
-	
-	public void helpMessage(CommandSender sender){
+
+    public SQLite3DataProvider getSQL() {
+        return this.sql;
+    }
+
+    public MoneySLand getMoneySLand(){
+        return this.land;
+    }
+
+    public void helpMessage(CommandSender sender){
         Thread th = new Thread(new Runnable(){
             @Override
             public void run() {
@@ -238,27 +252,27 @@ public class ChestProtect extends PluginBase {
         this.conf.load(getDataFolder().toString() + "/Config.yml");
         this.pluginData = this.conf.getAll();
 
-        /*コンフィグからデータを取得*/        
+        /*コンフィグからデータを取得*/
         debug = (String) pluginData.get("PrintData");
         notAllowedWorld = conf.getStringList("notAllowedWorld");
 
         return;
     }
-    
+
     public void initHelpFile(){
-    	if(!new File(getDataFolder().toString() + "/Help.txt").exists()){
+        if(!new File(getDataFolder().toString() + "/Help.txt").exists()){
             try {
                 FileWriter fw = new FileWriter(new File(getDataFolder().toString() + "/Help.txt"), true);
                 PrintWriter pw = new PrintWriter(fw);
                 pw.println("");
                 pw.close();
-                
+
                 Utils.writeFile(new File(getDataFolder().toString() + "/Help.txt"), this.getClass().getClassLoader().getResourceAsStream("Help.txt"));
             } catch (IOException e) {
                 e.printStackTrace();
             }
-    	}
-    	return;
+        }
+        return;
     }
 
 }
