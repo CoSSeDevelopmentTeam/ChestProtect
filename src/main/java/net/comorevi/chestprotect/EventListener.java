@@ -183,7 +183,7 @@ public class EventListener implements Listener {
                     break;
             }
 
-        }else if(plugin.getMoneySLand().isEditable((int) player.x, (int) player.z, player.getLevel().getName(), player)){
+        }else if(!plugin.getMoneySLand().isEditable((int) player.x, (int) player.z, player.getLevel().getName(), player)){
             switch (block.getId()) {
                 case Block.CHEST:
                     event.setCancelled();
