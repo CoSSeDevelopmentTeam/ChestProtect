@@ -22,4 +22,5 @@ error-command-message3: "あなたはこのコマンドを実行する権限を�
 error-command-message4: "指定されたプレイヤーが見つかりませんでした。"
 error-command-console: "chestコマンドはゲーム内からの実行のみ許可されています。"
 error-notFoundKey: "要求されたキーが見つかりません。Message.ymlを削除して再起動し、メッセージファイルの再生成を試みてください。"
+error-not-allowed-world: "このワールドにはチェストを設置できません。"
 error-all: "エラーが発生しました。"

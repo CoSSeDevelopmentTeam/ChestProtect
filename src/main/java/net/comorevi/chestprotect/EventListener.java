@@ -175,11 +175,20 @@ public class EventListener implements Listener {
 		Player player = event.getPlayer();
 		String owner = player.getName();
 	    Block block = event.getBlock();
-	    switch (block.getId()) {
-		    case Block.CHEST:
-		    	plugin.getSQL().addProtect(owner, (int)block.getX(), (int)block.getY(), (int)block.getZ(), "normal");
-		    	player.sendMessage(TextValues.INFO + plugin.translateString("player-chest-place"));
-		    	break;
+	    if(ChestProtect.notAllowedWorld.contains(player.getLevel().getName())) {
+	    	switch (block.getId()) {
+		    	case Block.CHEST:
+			    	event.setCancelled();
+			    	player.sendMessage(TextValues.HELP + plugin.translateString("error-not-allowed-world"));
+			    	break;
+	    	}	    	
+	    } else {
+	    	switch (block.getId()) {
+			    case Block.CHEST:
+			    	plugin.getSQL().addProtect(owner, (int)block.getX(), (int)block.getY(), (int)block.getZ(), "normal");
+			    	player.sendMessage(TextValues.INFO + plugin.translateString("player-chest-place"));
+			    	break;
+		    }
 	    }
 	}
 	

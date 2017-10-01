@@ -25,7 +25,9 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import cn.nukkit.command.Command;
@@ -40,6 +42,7 @@ public class ChestProtect extends PluginBase {
 	private Config translateFile;
     private Map<String, Object> configData = new HashMap<String, Object>();
     private Map<String, Object> pluginData = new HashMap<String, Object>();
+    public static List<String> notAllowedWorld = new ArrayList<String>();
     private Config conf;
     
     public static Map<String, String[]> optionData = new HashMap<String, String[]>();
@@ -226,6 +229,7 @@ public class ChestProtect extends PluginBase {
 
             this.conf = new Config(new File(getDataFolder().toString() + "/Config.yml"), Config.YAML);
             this.conf.load(getDataFolder().toString() + "/Config.yml");
+            this.conf.set("notAllowedWorld", new ArrayList<String>());
             this.conf.set("PrintData", "false");
             this.conf.save();
         }
@@ -236,6 +240,7 @@ public class ChestProtect extends PluginBase {
 
         /*コンフィグからデータを取得*/        
         debug = (String) pluginData.get("PrintData");
+        notAllowedWorld = conf.getStringList("notAllowedWorld");
 
         return;
     }
