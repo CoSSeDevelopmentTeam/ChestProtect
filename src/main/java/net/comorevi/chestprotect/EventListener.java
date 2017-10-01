@@ -175,6 +175,7 @@ public class EventListener implements Listener {
         Player player = event.getPlayer();
         String owner = player.getName();
         Block block = event.getBlock();
+
         if(ChestProtect.notAllowedWorld.contains(player.getLevel().getName())) {
             switch (block.getId()) {
                 case Block.CHEST:
@@ -183,7 +184,7 @@ public class EventListener implements Listener {
                     break;
             }
 
-        }else if(!plugin.getMoneySLand().isEditable((int) player.x, (int) player.z, player.getLevel().getName(), player)){
+        }else if(!plugin.getMoneySLand().getLand((int) player.x, (int) player.z, player.getLevel().getName()).get("owner").equals(player.getName().toLowerCase())){
             switch (block.getId()) {
                 case Block.CHEST:
                     event.setCancelled();
