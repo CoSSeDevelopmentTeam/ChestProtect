@@ -62,7 +62,7 @@ public class ChestProtect extends PluginBase {
         this.initHelpFile();
 
         try{
-            this.land = (MoneySLand) this.getServer().getPluginManager().getPlugin("MoneySAPI");
+            this.land = (MoneySLand) this.getServer().getPluginManager().getPlugin("MoneySLand");
         }catch(Exception e){
             this.getLogger().alert(TextValues.ALERT + this.translateString("error-no-moneysland"));
             this.getServer().getPluginManager().disablePlugin(this);
