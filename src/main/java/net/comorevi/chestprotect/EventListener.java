@@ -152,21 +152,33 @@ public class EventListener implements Listener {
         Player player = event.getPlayer();
         String user = player.getName();
         Block block = event.getBlock();
-        switch (block.getId()) {
-            case Block.CHEST:
-                if(plugin.getSQL().isOwner(user, (int)block.getX(), (int)block.getY(), (int)block.getZ())) {
-                    plugin.getSQL().deleteProtect(user, (int)block.getX(), (int)block.getY(), (int)block.getZ());
-                    player.sendMessage(TextValues.INFO + plugin.translateString("player-chest-break"));
-                } else {
-                    if(player.isOp()) {
-                        player.sendMessage(TextValues.INFO + plugin.translateString("player-chest-break-byOp"));
-                        plugin.getSQL().deleteProtect(user, (int)block.getX(), (int)block.getY(), (int)block.getZ());
-                    } else {
-                        event.setCancelled();
-                        player.sendMessage(TextValues.ALERT + plugin.translateString("error-chest-break"));
-                    }
-                }
-                break;
+        
+        switch(block.getId()) {
+        	case Block.CHEST:
+        		if(plugin.getMoneySLand().getLand((int) player.x, (int) player.z, player.getLevel().getName()).get("owner").equals(player.getName().toLowerCase())) {
+        			if(plugin.getSQL().isOwner(user, (int)block.getX(), (int)block.getY(), (int)block.getZ())) {
+        				plugin.getSQL().deleteProtect(user, (int)block.getX(), (int)block.getY(), (int)block.getZ());
+				        player.sendMessage(TextValues.INFO + plugin.translateString("player-chest-break"));
+        			} else if(player.isOp()) {
+        				player.sendMessage(TextValues.INFO + plugin.translateString("player-chest-break-byOp"));
+			            plugin.getSQL().deleteProtect(user, (int)block.getX(), (int)block.getY(), (int)block.getZ());
+        			} else {
+        				event.setCancelled();
+			            player.sendMessage(TextValues.ALERT + plugin.translateString("error-chest-land"));
+        			}
+		        } else {
+		        	if(plugin.getSQL().isOwner(user, (int)block.getX(), (int)block.getY(), (int)block.getZ())) {
+        				plugin.getSQL().deleteProtect(user, (int)block.getX(), (int)block.getY(), (int)block.getZ());
+				        player.sendMessage(TextValues.INFO + plugin.translateString("player-chest-break"));
+        			} else if(player.isOp()) {
+        				player.sendMessage(TextValues.INFO + plugin.translateString("player-chest-break-byOp"));
+			            plugin.getSQL().deleteProtect(user, (int)block.getX(), (int)block.getY(), (int)block.getZ());
+        			} else {
+        				event.setCancelled();
+			            player.sendMessage(TextValues.ALERT + plugin.translateString("error-chest-land"));
+        			}
+		        }
+        		break;
         }
     }
 
@@ -183,17 +195,17 @@ public class EventListener implements Listener {
                     player.sendMessage(TextValues.HELP + plugin.translateString("error-not-allowed-world"));
                     break;
             }
-
-        }else if(!plugin.getMoneySLand().getLand((int) player.x, (int) player.z, player.getLevel().getName()).get("owner").equals(player.getName().toLowerCase())){
-            switch (block.getId()) {
-                case Block.CHEST:
-                    event.setCancelled();
-                    player.sendMessage(TextValues.HELP + plugin.translateString("error-chest-land"));
-                    break;
-            }
-
-        }else {
-            switch (block.getId()) {
+        } else if(!player.isOp()) {
+        	if(!plugin.getMoneySLand().getLand((int) player.x, (int) player.z, player.getLevel().getName()).get("owner").equals(player.getName().toLowerCase())) {
+        		switch (block.getId()) {
+	                case Block.CHEST:
+	                    event.setCancelled();
+	                    player.sendMessage(TextValues.HELP + plugin.translateString("error-chest-land"));
+	                    break;
+	            }
+        	}
+        } else {
+        	switch (block.getId()) {
                 case Block.CHEST:
                     plugin.getSQL().addProtect(owner, (int)block.getX(), (int)block.getY(), (int)block.getZ(), "normal");
                     player.sendMessage(TextValues.INFO + plugin.translateString("player-chest-place"));
