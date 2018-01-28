@@ -36,8 +36,6 @@ import cn.nukkit.command.ConsoleCommandSender;
 import cn.nukkit.plugin.PluginBase;
 import cn.nukkit.utils.Config;
 import cn.nukkit.utils.Utils;
-import net.comorevi.moneysland.MoneySLand;
-import net.comorevi.moneysland.TextValues;
 
 public class ChestProtect extends PluginBase {
 
@@ -51,7 +49,6 @@ public class ChestProtect extends PluginBase {
 
     private SQLite3DataProvider sql;
     private String debug;
-    private MoneySLand land;
 
     @Override
     public void onEnable() {
@@ -60,13 +57,6 @@ public class ChestProtect extends PluginBase {
         this.initMessageConfig();
         this.initChestProtectConfig();
         this.initHelpFile();
-
-        try{
-            this.land = (MoneySLand) this.getServer().getPluginManager().getPlugin("MoneySLand");
-        }catch(Exception e){
-            this.getLogger().alert(TextValues.ALERT + this.translateString("error-no-moneysland"));
-            this.getServer().getPluginManager().disablePlugin(this);
-        }
 
         this.sql = new SQLite3DataProvider(this);
         getServer().getPluginManager().registerEvents(new EventListener(this), this);
@@ -155,10 +145,6 @@ public class ChestProtect extends PluginBase {
 
     public SQLite3DataProvider getSQL() {
         return this.sql;
-    }
-
-    public MoneySLand getMoneySLand(){
-        return this.land;
     }
 
     public void helpMessage(CommandSender sender){
