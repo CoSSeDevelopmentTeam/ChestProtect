@@ -2,6 +2,12 @@
 チェストを設置するだけで標準的なチェストロックをかけられます。
 コマンドを用いて標準(normal)、パス(pass)、限定共有(share)、完全共有(public)の中からロックモードを変更できます。
 
+## 動作する主なサーバーソフトウェア
+ - Nukkit
+ - Nukkit X
+ - Jupiter
+
+
 ## Commands usage
 |コマンド|説明|
 |:--|:--|
@@ -17,5 +23,5 @@
 General Public License v3.0
 
 ## Download
-[Github Release]()
+[Github Release](https://github.com/CosmoSunriseServerPluginEditorsTeam/ChestProtect/releases/tag/1.1)
 [MCBE FORUM]()
