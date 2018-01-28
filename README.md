@@ -24,4 +24,4 @@ General Public License v3.0
 
 ## Download
 [Github Release](https://github.com/CosmoSunriseServerPluginEditorsTeam/ChestProtect/releases/tag/1.1)
-[MCBE FORUM]()
+[MCBE FORUM](https://forum.mcbe.jp/resources/52/)
